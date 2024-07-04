@@ -13,6 +13,7 @@ let merchantRegistrationPage: MerchantRegistrationPage;
 test.beforeEach(async ({ baseurl, username, password}) => {
     browser = await chromium.launch({headless: false,args: ['--allow-running-insecure-content','--disable-web-security','--ignore-certificate-errors']});
     context = await browser.newContext({ recordVideo: { dir: 'videos/' } });
+    await context.tracing.start({ screenshots: true, snapshots: true });
     page = await context.newPage();
     await page.setViewportSize({ width: 1500, height: 720 });
 
@@ -25,6 +26,7 @@ test.beforeEach(async ({ baseurl, username, password}) => {
     await loginLogoutPage.clickSignIn();
 });
 test.afterEach(async () => {
+    await context.tracing.stop({ path: 'trace.zip' });
     await page.close();
     await context.close();
     await browser.close();
